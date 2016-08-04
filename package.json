@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "pretest": "standard",
-    "test": "tap --timeout=5000 --coverage ./test/*"
+    "test": "tap --timeout=5000 --coverage ./test/*",
+    "release": "standard-version"
   },
   "repository": {
     "type": "git",
@@ -34,6 +35,7 @@
   "devDependencies": {
     "nock": "^8.0.0",
     "standard": "^7.1.2",
+    "standard-version": "^2.4.0",
     "tap": "^6.3.0"
   }
 }

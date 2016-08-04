@@ -1,0 +1,39 @@
+{
+  "name": "@npm/npme-auth-oauth2",
+  "version": "1.0.0",
+  "description": "auth strategy for OAuth 2.0 SSO.",
+  "main": "index.js",
+  "scripts": {
+    "pretest": "standard",
+    "test": "tap --timeout=5000 --coverage ./test/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/npm/npme-auth-oauth2.git"
+  },
+  "keywords": [
+    "sso",
+    "npme",
+    "npm",
+    "auth",
+    "strategy"
+  ],
+  "author": "Ben Coe <ben@npmjs.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/npm/npme-auth-oauth2/issues"
+  },
+  "homepage": "https://github.com/npm/npme-auth-oauth2#readme",
+  "dependencies": {
+    "lodash": "^4.14.1",
+    "redis": "^2.1.0",
+    "request": "^2.74.0",
+    "simple-oauth2": "^0.8.0",
+    "uuid": "^2.0.2"
+  },
+  "devDependencies": {
+    "nock": "^8.0.0",
+    "standard": "^7.1.2",
+    "tap": "^6.3.0"
+  }
+}

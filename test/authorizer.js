@@ -17,6 +17,31 @@ tap.test('it responds with session object if SSO dance is complete', function (t
     .get('/user')
     .reply(200)
 
+  session.unlock('ben@example.com-abc123')
+
+  session.set('ben@example.com-abc123', userComplete, function (err) {
+    t.equal(err, null)
+    authorizer.authorize({
+      headers: {
+        authorization: 'Bearer ben@example.com-abc123'
+      }
+    }, function (err, user) {
+      authorizer.end()
+      session.unlock('ben@example.com-abc123')
+      session.delete('ben@example.com-abc123')
+
+      profile.done()
+      t.equal(err, null)
+      t.equal(user.email, 'ben@example.com')
+      t.end()
+    })
+  })
+})
+
+tap.test('does not check github if request is within timeout window', function (t) {
+  var authorizer = new Authorizer()
+
+  session.lock('ben@example.com-abc123')
   session.set('ben@example.com-abc123', userComplete, function (err) {
     t.equal(err, null)
     authorizer.authorize({
@@ -26,8 +51,8 @@ tap.test('it responds with session object if SSO dance is complete', function (t
     }, function (err, user) {
       authorizer.end()
       session.delete('ben@example.com-abc123')
+      session.unlock('ben@example.com-abc123')
 
-      profile.done()
       t.equal(err, null)
       t.equal(user.email, 'ben@example.com')
       t.end()
@@ -50,6 +75,7 @@ tap.test('it returns error with login url if access token is no longer valid', f
     }, function (err, user) {
       authorizer.end()
       session.delete('ben@example.com-abc123')
+      session.unlock('ben@example.com-abc123')
 
       profile.done()
       t.ok(err.message.indexOf('visit https://auth.example.com') !== -1)
@@ -69,6 +95,7 @@ tap.test('it returns error with login url if SSO dance is not complete', functio
     }, function (err, user) {
       authorizer.end()
       session.delete('ben@example.com-abc123')
+      session.unlock('ben@example.com-abc123')
 
       t.ok(err.message.indexOf('visit https://auth.example.com') !== -1)
       t.end()

@@ -103,6 +103,57 @@ tap.test('it returns error with login url if SSO dance is not complete', functio
   })
 })
 
+tap.test('it indicates that upstream caching is not allowed with OAuth-verified response', t => {
+  var authorizer = new Authorizer()
+  var profile = nock('https://api.github.com')
+    .get('/user')
+    .reply(200)
+
+  session.unlock('ben@example.com-abc123')
+
+  session.set('ben@example.com-abc123', userComplete, function (err) {
+    t.equal(err, null)
+    authorizer.authorize({
+      headers: {
+        authorization: 'Bearer ben@example.com-abc123'
+      }
+    }, function (err, user) {
+      authorizer.end()
+      session.unlock('ben@example.com-abc123')
+      session.delete('ben@example.com-abc123')
+
+      profile.done()
+      t.equal(err, null)
+      t.equal(user.email, 'ben@example.com')
+      t.equal(user.cacheAllowed, false)
+      t.end()
+    })
+  })
+})
+
+tap.test('it indicates that upstream caching is not allowed with cached response', t => {
+  var authorizer = new Authorizer()
+
+  session.lock('ben@example.com-abc123')
+  session.set('ben@example.com-abc123', userComplete, function (err) {
+    t.equal(err, null)
+    authorizer.authorize({
+      headers: {
+        authorization: 'Bearer ben@example.com-abc123'
+      }
+    }, function (err, user) {
+      authorizer.end()
+      session.delete('ben@example.com-abc123')
+      session.unlock('ben@example.com-abc123')
+
+      t.equal(err, null)
+      t.equal(user.email, 'ben@example.com')
+      t.equal(user.cacheAllowed, false)
+      t.end()
+    })
+  })
+})
+
 tap.test('after', function (t) {
   session.end(true)
   t.end()
